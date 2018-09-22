@@ -158,7 +158,7 @@ let vertexShader = `
 
     void main()
     {
-        gl_Position = modelViewProjectionMatrix * vec4(position, 1.0);
+        gl_Position = modelViewProjectionMatrix * vec4(position, 2.0);
         vec3 viewNormal = (modelViewMatrix * vec4(normal, 0.0)).xyz;
         color = mix(bgColor * 0.8, fgColor, viewNormal.z) + pow(viewNormal.z, 10.0);
     }
@@ -202,7 +202,7 @@ let startTime = new Date().getTime() / 1000;
 
 
 function draw() {
-    let time = new Date().getTime() / 10000 - startTime;
+    let time = new Date().getTime() / 200 - startTime;
 
     mat4.perspective(projMatrix, Math.PI / 4, app.width / app.height, 0.1, 100.0);
     mat4.lookAt(viewMatrix, vec3.fromValues(3, 0, 2), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
