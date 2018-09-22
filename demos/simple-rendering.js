@@ -202,7 +202,7 @@ let startTime = new Date().getTime() / 1000;
 
 
 function draw() {
-    let time = new Date().getTime() / 200 - startTime;
+    let time = new Date().getTime() / 10 - startTime;
 
     mat4.perspective(projMatrix, Math.PI / 4, app.width / app.height, 0.1, 100.0);
     mat4.lookAt(viewMatrix, vec3.fromValues(3, 0, 2), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
@@ -218,7 +218,7 @@ function draw() {
     drawCall.uniform("modelViewMatrix", modelViewMatrix);
     drawCall.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
-    app.clear();
+    //app.clear();
     drawCall.draw();
 
     // mat4.fromTranslation(modelMatrix, vec3.fromValues(0, 0, 0));
