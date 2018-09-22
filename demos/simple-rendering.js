@@ -126,11 +126,11 @@ let triangles = new Uint16Array([
 let fragmentShader = `
     #version 300 es
     precision highp float;
-    
+
     in vec4 color;
-    
+
     out vec4 outColor;
-    
+
     void main()
     {
         outColor = color;
@@ -145,17 +145,17 @@ let fragmentShader = `
 // language=GLSL
 let vertexShader = `
     #version 300 es
-    
+
     uniform vec4 bgColor;
     uniform vec4 fgColor;
     uniform mat4 modelViewMatrix;
     uniform mat4 modelViewProjectionMatrix;
-    
+
     layout(location=0) in vec3 position;
     layout(location=1) in vec3 normal;
-    
+
     out vec4 color;
-    
+
     void main()
     {
         gl_Position = modelViewProjectionMatrix * vec4(position, 1.0);
@@ -173,7 +173,7 @@ let bgColor = vec4.fromValues(1.0, 0.2, 0.3, 1.0);
 let fgColor = vec4.fromValues(1.0, 0.9, 0.5, 1.0);
 
 
-app.clearColor(bgColor[0], bgColor[1], bgColor[2], bgColor[3])
+app.clearColor(bgColor[1], bgColor[4], bgColor[6], bgColor[4])
     // .depthTest();
     .cullBackfaces();
 
@@ -193,7 +193,7 @@ let modelViewProjectionMatrix = mat4.create();
 let rotateXMatrix = mat4.create();
 let rotateYMatrix = mat4.create();
 
-let drawCall = app.createDrawCall(program, vertexArray, PicoGL.TRIANGLES)
+let drawCall = app.createDrawCall(program, vertexArray, PicoGL.TRIANGLE)
     .uniform("bgColor", bgColor)
     .uniform("fgColor", fgColor);
 
@@ -202,7 +202,7 @@ let startTime = new Date().getTime() / 1000;
 
 
 function draw() {
-    let time = new Date().getTime() / 1000 - startTime;
+    let time = new Date().getTime() / 10000 - startTime;
 
     mat4.perspective(projMatrix, Math.PI / 4, app.width / app.height, 0.1, 100.0);
     mat4.lookAt(viewMatrix, vec3.fromValues(3, 0, 2), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
