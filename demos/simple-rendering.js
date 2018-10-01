@@ -16,105 +16,17 @@
 // ******************************************************
 
 let positions = new Float32Array([
-    // front
-    -1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0,
-    0.5, -0.5, 0.5,
-    -0.5, -0.5, 0.5,
-
-    // back
-    -1.0, 1.0, -1.0,
-    1.0, 1.0, -1.0,
-    0.5, -0.5, -0.5,
-    -0.5, -0.5, -0.5,
-
-    //top
-    -1.0, 1.0, 1.0,
-    1.0, 1.0, 1.0,
-    1.0, 1.0, -1.0,
-    -1.0, 1.0, -1.0,
-
-    //bottom
-    -0.5, -0.5, 0.5,
-    0.5, -0.5, 0.5,
-    0.5, -0.5, -0.5,
-    -0.5, -0.5, -0.5,
-
-    //left
-    -0.5, -0.5, 0.5,
-    -1.0, 1.0, 1.0,
-    -1.0, 1.0, -1.0,
-    -0.5, -0.5, -0.5,
-
-    //right
-    0.5, -0.5, 0.5,
-    1.0, 1.0, 1.0,
-    1.0, 1.0, -1.0,
-    0.5, -0.5, -0.5,
+     0.0000,0.0000,-1.0000,0.7236,-0.5257,-0.4472,-0.2764,-0.8506,-0.4472,-0.8944,0.0000,-0.4472,-0.2764,0.8506,-0.4472,0.7236,0.5257,-0.4472,0.2764,-0.8506,0.4472,-0.7236,-0.5257,0.4472,-0.7236,0.5257,0.4472,0.2764,0.8506,0.4472,0.8944,0.0000,0.4472,0.0000,0.0000,1.0000
 ]);
 
 let normals = new Float32Array([
     // front
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0,
-
-    // back
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-    0.0, 0.0, -1.0,
-
-    //top
-    0.0, 1.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 1.0, 0.0,
-    0.0, 1.0, 0.0,
-
-    //bottom
-    0.0, -1.0, 0.0,
-    0.0, -1.0, 0.0,
-    0.0, -1.0, 0.0,
-    0.0, -1.0, 0.0,
-
-    //left
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
-    -1.0, 0.0, 0.0,
-
-    //right
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
-    1.0, 0.0, 0.0,
+    0.0000,0.0000,-1.0000,0.7236,-0.5257,-0.4472,-0.2764,-0.8506,-0.4472,-0.8944,0.0000,-0.4472,-0.2764,0.8506,-0.4472,0.7236,0.5257,-0.4472,0.2764,-0.8506,0.4472,-0.7236,-0.5257,0.4472,-0.7236,0.5257,0.4472,0.2764,0.8506,0.4472,0.8944,0.0000,0.4472,0.0000,0.0000,1.0000
 ]);
 
 let triangles = new Uint16Array([
     // front
-    2, 1, 0,
-    0, 3, 2,
-
-    // back
-    4, 5, 6,
-    6, 7, 4,
-
-    // top
-    8, 9, 10,
-    10, 11, 8,
-
-    // bottom
-    14, 13, 12,
-    12, 15, 14,
-
-    // left
-    16, 17, 18,
-    18, 19, 16,
-
-    // right
-    22, 21, 20,
-    20, 23, 22,
+  0,1,2,1,0,5,0,2,3,0,3,4,0,4,5,1,5,10,2,1,6,3,2,7,4,3,8,5,4,9,1,10,6,2,6,7,3,7,8,4,8,9,5,9,10,6,10,11,7,6,11,8,7,11,9,8,11,10,9,11
 ]);
 
 
@@ -150,6 +62,7 @@ let vertexShader = `
     uniform vec4 fgColor;
     uniform mat4 modelViewMatrix;
     uniform mat4 modelViewProjectionMatrix;
+    uniform float time;
 
     layout(location=0) in vec3 position;
     layout(location=1) in vec3 normal;
@@ -158,7 +71,9 @@ let vertexShader = `
 
     void main()
     {
-        gl_Position = modelViewProjectionMatrix * vec4(position, 2.0);
+      vec3 p = position;
+        if (abs(p.x) > 0.80) p *= (sin(time));
+        gl_Position = modelViewProjectionMatrix * vec4(p, 2.0);
         vec3 viewNormal = (modelViewMatrix * vec4(normal, 0.0)).xyz;
         color = mix(bgColor * 0.8, fgColor, viewNormal.z) + pow(viewNormal.z, 10.0);
     }
@@ -170,7 +85,7 @@ let vertexShader = `
 // ******************************************************
 
 let bgColor = vec4.fromValues(1.0, 0.2, 0.3, 1.0);
-let fgColor = vec4.fromValues(1.0, 0.9, 0.5, 1.0);
+let fgColor = vec4.fromValues(3.0, 6.0, 9.0, 12.0);
 
 
 app.clearColor(bgColor[1], bgColor[4], bgColor[6], bgColor[4])
@@ -202,7 +117,7 @@ let startTime = new Date().getTime() / 1000;
 
 
 function draw() {
-    let time = new Date().getTime() / 10 - startTime;
+    let time = new Date().getTime() / 500 - startTime;
 
     mat4.perspective(projMatrix, Math.PI / 4, app.width / app.height, 0.1, 100.0);
     mat4.lookAt(viewMatrix, vec3.fromValues(3, 0, 2), vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
@@ -218,7 +133,7 @@ function draw() {
     drawCall.uniform("modelViewMatrix", modelViewMatrix);
     drawCall.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
 
-    //app.clear();
+    app.clear();
     drawCall.draw();
 
     // mat4.fromTranslation(modelMatrix, vec3.fromValues(0, 0, 0));
