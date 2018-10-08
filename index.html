@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Simple Rendering</title>
+        <title>Video Game Graphics Course</title>
         <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
         <style>
             body {
@@ -34,6 +34,20 @@
     </head>
     <body>
         <script type="text/javascript">
+            function loadImages(urls, ok) {
+                var numImages = urls.length;
+                var images = new Array(numImages);
+                function onload() {
+                    if (--numImages === 0)
+                        ok(images);
+                }
+                for (var i = 0; i < numImages; ++i) {
+                    images[i] = new Image();
+                    images[i].onload = onload;
+                    images[i].src = urls[i];
+                }
+            }
+
             function getParameterByName(name) {
                 var match = RegExp('[?&]' + name + '=([^&]*)')
                     .exec(window.location.search);
@@ -43,6 +57,8 @@
             let app = null;
             let loadScript = getParameterByName('load');
             if ('undefined' !== typeof loadScript && loadScript !== null) {
+                document.title = loadScript + " - " + document.title;
+
                 let canvas = document.createElement("canvas");
                 canvas.width = window.innerWidth;
                 canvas.height = window.innerHeight;
@@ -65,10 +81,13 @@
             <p>
                 <a href="slides/01-introduction.pdf">01 Introduction</a>
                 <a href="slides/02-rendering.pdf">02 Rendering</a>
+                <a href="slides/03-gpu.pdf">03 GPU</a>
+                <a href="slides/04-texturing.pdf">04 Texturing and Memory</a>
             </p>
             <h2>Demos</h2>
             <p>
                 <a href="?load=demos/simple-rendering.js">01 Simple rendering</a>
+                <a href="?load=demos/texturing.js">02 Texturing</a>
             </p>
         </p>
     </body>
