@@ -288,8 +288,8 @@ loadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) 
     function draw() {
         let time = new Date().getTime() / 1000 - startTime;
 
-        mat4.perspective(projMatrix, Math.PI / 1.4, app.width / app.height, 0.1, 100.0);
-        let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(0, -1, 1), vec3.fromValues(0, 0, 0), time);
+        mat4.perspective(projMatrix, Math.PI / 1.9, app.width / app.height, 0.6, 100.0);
+        let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(1, 2, 0), vec3.fromValues(0, 0, 0), time);
         mat4.lookAt(viewMatrix, camPos, vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
         mat4.multiply(viewProjMatrix, projMatrix, viewMatrix);
 
