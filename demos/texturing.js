@@ -294,7 +294,7 @@ loadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) 
         mat4.multiply(viewProjMatrix, projMatrix, viewMatrix);
 
         mat4.fromXRotation(rotateXMatrix, time * 0.1136 - Math.PI / 2);
-        mat4.fromZRotation(rotateZMatrix, -time * 2);
+        mat4.fromZRotation(rotateZMatrix, -time * 0);
         mat4.multiply(modelMatrix, rotateXMatrix, rotateZMatrix);
 
         mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
