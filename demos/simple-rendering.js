@@ -38,11 +38,8 @@ let triangles = new Uint16Array([
 let fragmentShader = `
     #version 300 es
     precision highp float;
-
     in vec4 color;
-
     out vec4 outColor;
-
     void main()
     {
         outColor = color;
@@ -57,18 +54,14 @@ let fragmentShader = `
 // language=GLSL
 let vertexShader = `
     #version 300 es
-
     uniform vec4 bgColor;
     uniform vec4 fgColor;
     uniform mat4 modelViewMatrix;
     uniform mat4 modelViewProjectionMatrix;
     uniform float time;
-
     layout(location=0) in vec3 position;
     layout(location=1) in vec3 normal;
-
     out vec4 color;
-
     void main()
     {
       vec3 p = position;

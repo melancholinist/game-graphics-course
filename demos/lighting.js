@@ -27,27 +27,27 @@ let lightPositions = [vec3.create(), vec3.create()];
 // language=GLSL
 let lightCalculationShader = `
     uniform vec3 cameraPosition;
-    uniform vec3 ambientLightColor;    
-    uniform vec3 lightColors[${numberOfLights}];        
+    uniform vec3 ambientLightColor;
+    uniform vec3 lightColors[${numberOfLights}];
     uniform vec3 lightPositions[${numberOfLights}];
-    
+
     // This function calculates light reflection using Phong reflection model (ambient + diffuse + specular)
     vec4 calculateLights(vec3 normal, vec3 position) {
         vec3 viewDirection = normalize(cameraPosition.xyz - position);
         vec4 color = vec4(ambientLightColor, 1.0);
-                
+
         for (int i = 0; i < lightPositions.length(); i++) {
             vec3 lightDirection = normalize(lightPositions[i] - position);
-            
-            // Lambertian reflection (ideal diffuse of matte surfaces) is also a part of Phong model                        
-            float diffuse = max(dot(lightDirection, normal), 0.0);                                    
-                      
-            // Phong specular highlight 
+
+            // Lambertian reflection (ideal diffuse of matte surfaces) is also a part of Phong model
+            float diffuse = max(dot(lightDirection, normal), 0.0);
+
+            // Phong specular highlight
             float specular = pow(max(dot(viewDirection, reflect(-lightDirection, normal)), 0.0), 50.0);
-            
-            // Blinn-Phong improved specular highlight                        
+
+            // Blinn-Phong improved specular highlight
             //float specular = pow(max(dot(normalize(lightDirection + viewDirection), normal), 0.0), 200.0);
-            
+
             color.rgb += lightColors[i] * diffuse + specular;
         }
         return color;
@@ -57,16 +57,16 @@ let lightCalculationShader = `
 // language=GLSL
 let fragmentShader = `
     #version 300 es
-    precision highp float;        
-    ${lightCalculationShader}        
-    
-    in vec3 vPosition;    
+    precision highp float;
+    ${lightCalculationShader}
+
+    in vec3 vPosition;
     in vec3 vNormal;
-    in vec4 vColor;    
-    
-    out vec4 outColor;        
-    
-    void main() {                      
+    in vec4 vColor;
+
+    out vec4 outColor;
+
+    void main() {
         // For Phong shading (per-fragment) move color calculation from vertex to fragment shader
         outColor = calculateLights(normalize(vNormal), vPosition);
         //outColor = vColor;
@@ -77,27 +77,27 @@ let fragmentShader = `
 let vertexShader = `
     #version 300 es
     ${lightCalculationShader}
-        
+
     layout(location=0) in vec4 position;
     layout(location=1) in vec4 normal;
-    
+
     uniform mat4 viewProjectionMatrix;
-    uniform mat4 modelMatrix;            
-    
-    out vec3 vPosition;    
+    uniform mat4 modelMatrix;
+
+    out vec3 vPosition;
     out vec3 vNormal;
     out vec4 vColor;
-    
+
     void main() {
         vec4 worldPosition = modelMatrix * position;
-        
-        vPosition = worldPosition.xyz;        
+
+        vPosition = worldPosition.xyz;
         vNormal = (modelMatrix * normal).xyz;
-        
+
         // For Gouraud shading (per-vertex) move color calculation from fragment to vertex shader
         //vColor = calculateLights(normalize(vNormal), vPosition);
-        
-        gl_Position = viewProjectionMatrix * worldPosition;                        
+
+        gl_Position = viewProjectionMatrix * worldPosition;
     }
 `;
 
