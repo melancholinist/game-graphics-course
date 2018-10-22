@@ -34,6 +34,12 @@
     </head>
     <body>
         <script type="text/javascript">
+<<<<<<< HEAD
+=======
+            vec3.zero = vec3.fromValues(0, 0, 0);
+            vec3.up = vec3.fromValues(0, 1, 0);
+
+>>>>>>> upstream/master
             function loadImages(urls, ok) {
                 var numImages = urls.length;
                 var images = new Array(numImages);
@@ -48,6 +54,16 @@
                 }
             }
 
+<<<<<<< HEAD
+=======
+            function toUniformArray(array) {
+                let result = [];
+                for (let i = 0; i < array.length; i++)
+                    result = result.concat(Array.from(array[i]));
+                return result;
+            }
+
+>>>>>>> upstream/master
             function getParameterByName(name) {
                 var match = RegExp('[?&]' + name + '=([^&]*)')
                     .exec(window.location.search);
@@ -83,11 +99,23 @@
                 <a href="slides/02-rendering.pdf">02 Rendering</a>
                 <a href="slides/03-gpu.pdf">03 GPU</a>
                 <a href="slides/04-texturing.pdf">04 Texturing and Memory</a>
+<<<<<<< HEAD
+=======
+                <a href="slides/05-lighting.pdf">05 Lighting</a>
+            </p>
+            <h2>Tests</h2>
+            <p>
+                <a href="https://play.kahoot.it/#/k/371a57f3-a6d0-4cec-9819-4b341d9ff68a">Kahoot</a>
+>>>>>>> upstream/master
             </p>
             <h2>Demos</h2>
             <p>
                 <a href="?load=demos/simple-rendering.js">01 Simple rendering</a>
                 <a href="?load=demos/texturing.js">02 Texturing</a>
+<<<<<<< HEAD
+=======
+                <a href="?load=demos/lighting.js">03 Lighting</a>
+>>>>>>> upstream/master
             </p>
         </p>
     </body>

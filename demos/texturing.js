@@ -168,6 +168,7 @@ let skyboxTriangles = new Uint16Array([
 let fragmentShader = `
     #version 300 es
     precision highp float;
+<<<<<<< HEAD
 
     uniform sampler2D tex;
     uniform float time;
@@ -182,12 +183,25 @@ let fragmentShader = `
         // Using time for second uv animation
         outColor = texture(tex, (v_uv - 0.5) * 2.0)
                    + texture(tex, (v_uv - 0.5) * 2.0 * sin(time * 3.46641));
+=======
+    
+    uniform sampler2D tex;    
+    
+    in vec2 v_uv;
+    
+    out vec4 outColor;
+    
+    void main()
+    {        
+        outColor = texture(tex, v_uv);
+>>>>>>> upstream/master
     }
 `;
 
 // language=GLSL
 let vertexShader = `
     #version 300 es
+<<<<<<< HEAD
 
     uniform mat4 modelViewProjectionMatrix;
 
@@ -201,6 +215,20 @@ let vertexShader = `
     {
         // Cube size is multiplied by 2
         gl_Position = modelViewProjectionMatrix * vec4(position, 1.0) * 2.0;
+=======
+            
+    uniform mat4 modelViewProjectionMatrix;
+    
+    layout(location=0) in vec3 position;
+    layout(location=1) in vec3 normal;
+    layout(location=2) in vec2 uv;
+        
+    out vec2 v_uv;
+    
+    void main()
+    {
+        gl_Position = modelViewProjectionMatrix * vec4(position, 1.0);           
+>>>>>>> upstream/master
         v_uv = uv;
     }
 `;
@@ -210,6 +238,7 @@ let vertexShader = `
 let skyboxFragmentShader = `
     #version 300 es
     precision mediump float;
+<<<<<<< HEAD
 
     uniform samplerCube cubemap;
     uniform samplerCube cubemap2;
@@ -223,16 +252,35 @@ let skyboxFragmentShader = `
 
       // Combining 2 cubemaps
       outColor = texture(cubemap, normalize(t.xyz / t.w)) * texture(cubemap2, normalize(t.xyz / t.w));
+=======
+    
+    uniform samplerCube cubemap;
+    uniform mat4 viewProjectionInverse;
+    in vec4 v_position;
+    
+    out vec4 outColor;
+    
+    void main() {
+      vec4 t = viewProjectionInverse * v_position;
+      outColor = texture(cubemap, normalize(t.xyz / t.w));
+>>>>>>> upstream/master
     }
 `;
 
 // language=GLSL
 let skyboxVertexShader = `
     #version 300 es
+<<<<<<< HEAD
 
     layout(location=0) in vec4 position;
     out vec4 v_position;
 
+=======
+    
+    layout(location=0) in vec4 position;
+    out vec4 v_position;
+    
+>>>>>>> upstream/master
     void main() {
       v_position = position;
       gl_Position = position;
@@ -261,6 +309,7 @@ let modelMatrix = mat4.create();
 let modelViewMatrix = mat4.create();
 let modelViewProjectionMatrix = mat4.create();
 let rotateXMatrix = mat4.create();
+<<<<<<< HEAD
 let rotateZMatrix = mat4.create();
 let skyboxViewProjectionInverse = mat4.create();
 
@@ -281,6 +330,18 @@ loadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) 
             negZ: images[0],
             posZ: images[0]
         }));
+=======
+let rotateYMatrix = mat4.create();
+let skyboxViewProjectionInverse = mat4.create();
+
+
+loadImages(["images/texture.jpg", "images/cubemap.jpg"], function (images) {
+    let drawCall = app.createDrawCall(program, vertexArray)
+        .texture("tex", app.createTexture2D(images[0], images[0].width, images[0].height, {flipY: true, magFilter: PicoGL.NEAREST, wrapT: PicoGL.REPEAT}));
+
+    let skyboxDrawCall = app.createDrawCall(skyboxProgram, skyboxArray)
+        .texture("cubemap", app.createCubemap({cross: images[1]}));
+>>>>>>> upstream/master
 
     let startTime = new Date().getTime() / 1000;
 
@@ -288,14 +349,24 @@ loadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) 
     function draw() {
         let time = new Date().getTime() / 1000 - startTime;
 
+<<<<<<< HEAD
         mat4.perspective(projMatrix, Math.PI / 1.9, app.width / app.height, 0.6, 100.0);
         let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(1, 2, 0), vec3.fromValues(0, 0, 0), time);
+=======
+        mat4.perspective(projMatrix, Math.PI / 2, app.width / app.height, 0.1, 100.0);
+        let camPos = vec3.rotateY(vec3.create(), vec3.fromValues(0, -1, 2), vec3.fromValues(0, 0, 0), time * 0.05);
+>>>>>>> upstream/master
         mat4.lookAt(viewMatrix, camPos, vec3.fromValues(0, 0, 0), vec3.fromValues(0, 1, 0));
         mat4.multiply(viewProjMatrix, projMatrix, viewMatrix);
 
         mat4.fromXRotation(rotateXMatrix, time * 0.1136 - Math.PI / 2);
+<<<<<<< HEAD
         mat4.fromZRotation(rotateZMatrix, -time * 0);
         mat4.multiply(modelMatrix, rotateXMatrix, rotateZMatrix);
+=======
+        mat4.fromZRotation(rotateYMatrix, time * 0.2235);
+        mat4.multiply(modelMatrix, rotateXMatrix, rotateYMatrix);
+>>>>>>> upstream/master
 
         mat4.multiply(modelViewMatrix, viewMatrix, modelMatrix);
         mat4.multiply(modelViewProjectionMatrix, viewProjMatrix, modelMatrix);
@@ -314,12 +385,19 @@ loadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) 
 
         app.depthTest();
         drawCall.uniform("modelViewProjectionMatrix", modelViewProjectionMatrix);
+<<<<<<< HEAD
         // passing time value for uv animation
         drawCall.uniform("time", time);
+=======
+>>>>>>> upstream/master
         drawCall.draw();
 
         requestAnimationFrame(draw);
     }
 
     requestAnimationFrame(draw);
+<<<<<<< HEAD
 });
+=======
+});
+>>>>>>> upstream/master
