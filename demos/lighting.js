@@ -247,6 +247,23 @@ let viewMatrix = mat4.create();
 let viewProjectionMatrix = mat4.create();
 let modelMatrix = mat4.create();
 
+oadImages(["images/lemon2.jpg", "images/coolercubemap.jpg"], function (images) {
+    let drawCall = app.createDrawCall(program, vertexArray)
+        .texture("tex", app.createTexture2D(images[0], images[0].width, images[0].height, {flipY: true, magFilter: PicoGL.NEAREST, wrapT: PicoGL.MIRRORED_REPEAT, wrapS: PicoGL.MIRRORED_REPEAT}));
+
+    let skyboxDrawCall = app.createDrawCall(skyboxProgram, skyboxArray)
+        .texture("cubemap", app.createCubemap({cross: images[1]}))
+
+        // Added second cubemap with all 6 sides mapped to texture.jpg
+        .texture("cubemap2", app.createCubemap({
+            negX: images[0],
+            posX: images[0],
+            negY: images[0],
+            posY: images[0],
+            negZ: images[0],
+            posZ: images[0]
+        }));
+
 
 
 
