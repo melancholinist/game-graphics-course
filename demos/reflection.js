@@ -2,9 +2,9 @@
 // Home task: combine reflections with texturing and lighting
 
 // Cube
-let positions = new Float32Array([-0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, 0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5, -0.5, -0.5, 0.5, 0.5, -0.5, 0.5, 0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5, -0.5, -0.5, 0.5, -0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -0.5, 0.5, -0.5, -0.5]);
-let normals = new Float32Array([0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, -1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 0.0, 0.0]);
-let triangles = new Uint16Array([2, 1, 0, 0, 3, 2, 4, 5, 6, 6, 7, 4, 8, 9, 10, 10, 11, 8, 14, 13, 12, 12, 15, 14, 16, 17, 18, 18, 19, 16, 22, 21, 20, 20, 23, 22]);
+let positions = new Float32Array([0.0000,0.0000,-1.0000,0.7236,-0.5257,-0.4472,-0.2764,-0.8506,-0.4472,-0.8944,0.0000,-0.4472,-0.2764,0.8506,-0.4472,0.7236,0.5257,-0.4472,0.2764,-0.8506,0.4472,-0.7236,-0.5257,0.4472,-0.7236,0.5257,0.4472,0.2764,0.8506,0.4472,0.8944,0.0000,0.4472,0.0000,0.0000,1.0000]);
+let normals = new Float32Array([0.0000,0.0000,-1.0000,0.7236,-0.5257,-0.4472,-0.2764,-0.8506,-0.4472,-0.8944,0.0000,-0.4472,-0.2764,0.8506,-0.4472,0.7236,0.5257,-0.4472,0.2764,-0.8506,0.4472,-0.7236,-0.5257,0.4472,-0.7236,0.5257,0.4472,0.2764,0.8506,0.4472,0.8944,0.0000,0.4472,0.0000,0.0000,1.0000]);
+let triangles = new Uint16Array([0,1,2,1,0,5,0,2,3,0,3,4,0,4,5,1,5,10,2,1,6,3,2,7,4,3,8,5,4,9,1,10,6,2,6,7,3,7,8,4,8,9,5,9,10,6,10,11,7,6,11,8,7,11,9,8,11,10,9,11]);
 
 
 let mirrorPositions = new Float32Array([
@@ -44,19 +44,22 @@ let skyboxTriangles = new Uint16Array([
 let fragmentShader = `
     #version 300 es
     precision highp float;
-    
-    uniform samplerCube cubemap;    
-        
+
+    uniform samplerCube cubemap;
+
     in vec3 vNormal;
     in vec3 viewDir;
-    
+
     out vec4 outColor;
-    
+
     void main()
-    {        
+    {
         vec3 reflectedDir = reflect(viewDir, normalize(vNormal));
-        outColor = texture(cubemap, reflectedDir);
-        
+        vec3 V = normalize(reflectedDir);
+        vec3 N = normalize (vNormal);
+        float fresnel = 1.0 - (V.x*N.x + V.y*N.y + V.z*N.z);
+        outColor = texture(cubemap, reflectedDir) * fresnel;
+
         // Try using a higher mipmap LOD to get a rough material effect without any performance impact
         //outColor = textureLod(cubemap, reflectedDir, 7.0);
     }
@@ -65,25 +68,25 @@ let fragmentShader = `
 // language=GLSL
 let vertexShader = `
     #version 300 es
-            
+
     uniform mat4 modelViewProjectionMatrix;
     uniform mat4 modelMatrix;
     uniform mat3 normalMatrix;
-    uniform vec3 cameraPosition; 
-    
+    uniform vec3 cameraPosition;
+
     layout(location=0) in vec4 position;
     layout(location=1) in vec3 normal;
     layout(location=2) in vec2 uv;
-        
+
     out vec2 vUv;
     out vec3 vNormal;
     out vec3 viewDir;
-    
+
     void main()
     {
-        gl_Position = modelViewProjectionMatrix * position;           
+        gl_Position = modelViewProjectionMatrix * position;
         vUv = uv;
-        viewDir = (modelMatrix * position).xyz - cameraPosition;                
+        viewDir = (modelMatrix * position).xyz - cameraPosition;
         vNormal = normalMatrix * normal;
     }
 `;
@@ -92,21 +95,22 @@ let vertexShader = `
 let mirrorFragmentShader = `
     #version 300 es
     precision highp float;
-    
+
     uniform sampler2D reflectionTex;
     uniform sampler2D distortionMap;
     uniform vec2 screenSize;
-    
-    in vec2 vUv;        
-        
+
+
+    in vec2 vUv;
+
     out vec4 outColor;
-    
+
     void main()
-    {                        
+    {
         vec2 screenPos = gl_FragCoord.xy / screenSize;
-        
-        // 0.03 is a mirror distortion factor, try making a larger distortion         
-        screenPos.x += (texture(distortionMap, vUv).r - 0.5) * 0.03;
+
+        // 0.03 is a mirror distortion factor, try making a larger distortion
+        screenPos.x += (texture(distortionMap, vUv).r - 0.5) * 0.1;
         outColor = texture(reflectionTex, screenPos);
     }
 `;
@@ -114,18 +118,18 @@ let mirrorFragmentShader = `
 // language=GLSL
 let mirrorVertexShader = `
     #version 300 es
-            
+
     uniform mat4 modelViewProjectionMatrix;
-    
-    layout(location=0) in vec4 position;   
+
+    layout(location=0) in vec4 position;
     layout(location=1) in vec2 uv;
-    
+
     out vec2 vUv;
-        
+
     void main()
     {
         vUv = uv;
-        gl_Position = modelViewProjectionMatrix * position;           
+        gl_Position = modelViewProjectionMatrix * position;
     }
 `;
 
@@ -133,14 +137,14 @@ let mirrorVertexShader = `
 let skyboxFragmentShader = `
     #version 300 es
     precision mediump float;
-    
+
     uniform samplerCube cubemap;
     uniform mat4 viewProjectionInverse;
-    
+
     in vec4 v_position;
-    
+
     out vec4 outColor;
-    
+
     void main() {
       vec4 t = viewProjectionInverse * v_position;
       outColor = texture(cubemap, normalize(t.xyz / t.w));
@@ -150,10 +154,10 @@ let skyboxFragmentShader = `
 // language=GLSL
 let skyboxVertexShader = `
     #version 300 es
-    
+
     layout(location=0) in vec4 position;
     out vec4 v_position;
-    
+
     void main() {
       v_position = position;
       gl_Position = position;
@@ -179,7 +183,7 @@ let mirrorArray = app.createVertexArray()
     .indexBuffer(app.createIndexBuffer(PicoGL.UNSIGNED_SHORT, 3, mirrorTriangles));
 
 // Change the reflection texture resolution to checkout the difference
-let reflectionResolutionFactor = 0.3;
+let reflectionResolutionFactor = 0.5;
 let reflectionColorTarget = app.createTexture2D(app.width * reflectionResolutionFactor, app.height * reflectionResolutionFactor, {magFilter: PicoGL.LINEAR});
 let reflectionDepthTarget = app.createTexture2D(app.width * reflectionResolutionFactor, app.height * reflectionResolutionFactor, {format: PicoGL.DEPTH_COMPONENT});
 let reflectionBuffer = app.createFramebuffer().colorTarget(0, reflectionColorTarget).depthTarget(reflectionDepthTarget);
@@ -198,7 +202,7 @@ let skyboxViewProjectionInverse = mat4.create();
 let cameraPosition = vec3.create();
 
 
-loadImages(["images/cubemap.jpg", "images/noise.png"], function (images) {
+loadImages(["images/coolercubemap.jpg", "images/noise.png"], function (images) {
     let cubemap = app.createCubemap({cross: images[0]});
     let drawCall = app.createDrawCall(program, vertexArray)
         .texture("cubemap", cubemap);
